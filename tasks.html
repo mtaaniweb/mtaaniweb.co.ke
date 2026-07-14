@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MtaaniOS | Tasks</title>
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/hztm3zo8/image/upload/v1783966839/Purple_and_Blue_Grdient_Simple_Minimalist_Elegant_Website_Logo_20260713_211434_0000_ndnwtt.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0D0B2B;--navy-soft:#141230;--navy-card:#181633;
+    --cyan:#38B6FF;--purple:#9B59B6;--text-primary:#F4F5F9;--text-muted:#9A9AB5;
+    --border:rgba(255,255,255,0.08);--danger:#FF6B6B;--success:#4ADE80;--warn:#FFC107;
+    --sidebar-w:240px;
+  }
+  [data-theme="light"]{
+    --navy:#F4F5F9;--navy-soft:#FFFFFF;--navy-card:#FFFFFF;
+    --text-primary:#171630;--text-muted:#6B6B85;--border:rgba(13,11,43,0.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--navy);font-family:'Inter',sans-serif;color:var(--text-primary);min-height:100vh;display:flex;transition:background 0.3s, color 0.3s;}
+  .sidebar{width:var(--sidebar-w);background:var(--navy-soft);border-right:1px solid var(--border);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;padding:24px 16px;z-index:100;transition:transform 0.3s;}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 24px;margin-bottom:8px;border-bottom:1px solid var(--border);}
+  .brand img{width:32px;height:32px;border-radius:8px;}
+  .brand span{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;}
+  nav{flex:1;display:flex;flex-direction:column;gap:2px;margin-top:16px;overflow-y:auto;}
+  nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:500;transition:background 0.15s, color 0.15s;}
+  nav a svg{width:16px;height:16px;flex-shrink:0;}
+  nav a:hover{background:rgba(56,182,255,0.08);color:var(--text-primary);}
+  nav a.active{background:linear-gradient(135deg, rgba(56,182,255,0.15), rgba(155,89,182,0.15));color:var(--cyan);}
+  .sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:8px;}
+  .signout-btn{width:100%;padding:10px 12px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--danger);font-size:13px;font-weight:500;cursor:pointer;text-align:left;font-family:'Inter',sans-serif;}
+  .signout-btn:hover{background:rgba(255,107,107,0.08);}
+
+  .main{margin-left:var(--sidebar-w);flex:1;padding:32px 40px 60px;max-width:1000px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:16px;}
+  .topbar h1{font-family:'Poppins',sans-serif;font-weight:600;font-size:24px;}
+  .topbar p{color:var(--text-muted);font-size:13px;margin-top:2px;}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:none;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;}
+  .btn-primary{background:linear-gradient(135deg, var(--cyan), var(--purple));color:#fff;}
+  .btn-primary:hover{opacity:0.92;}
+  .btn-ghost{background:none;border:1px solid var(--border);color:var(--text-primary);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.04);}
+  .btn-danger{background:rgba(255,107,107,0.1);color:var(--danger);border:1px solid rgba(255,107,107,0.2);}
+  .btn-sm{padding:6px 11px;font-size:11px;}
+
+  .view-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:20px;padding-bottom:4px;}
+  .view-tab{flex-shrink:0;padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--navy-card);color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;}
+  .view-tab.active{background:linear-gradient(135deg, rgba(56,182,255,0.18), rgba(155,89,182,0.18));color:var(--cyan);border-color:transparent;}
+
+  .search-row{display:flex;gap:10px;margin-bottom:20px;}
+  .search-row input{flex:1;padding:11px 14px;background:var(--navy-card);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:13px;}
+  .search-row input:focus{outline:none;border-color:var(--cyan);}
+
+  .task-item{
+    display:flex;align-items:flex-start;gap:14px;
+    background:var(--navy-card);border:1px solid var(--border);border-radius:14px;
+    padding:16px 18px;margin-bottom:10px;
+  }
+  .task-item.done{opacity:0.55;}
+  .task-checkbox{width:20px;height:20px;accent-color:var(--cyan);cursor:pointer;margin-top:2px;flex-shrink:0;}
+  .task-body{flex:1;cursor:pointer;}
+  .task-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+  .task-title.done{text-decoration:line-through;color:var(--text-muted);}
+  .task-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--text-muted);align-items:center;}
+  .priority-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px;}
+  .priority-dot.high{background:var(--danger);}
+  .priority-dot.medium{background:var(--warn);}
+  .priority-dot.low{background:var(--cyan);}
+  .due-tag.overdue{color:var(--danger);font-weight:600;}
+  .task-actions{display:flex;gap:6px;flex-shrink:0;}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
+  .empty-state svg{width:40px;height:40px;margin-bottom:14px;opacity:0.4;}
+  .empty-state p{font-size:13px;}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--navy-soft);border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:440px;max-height:88vh;overflow-y:auto;}
+  .modal h2{font-family:'Poppins',sans-serif;font-size:17px;font-weight:600;margin-bottom:18px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:6px;}
+  .field input, .field textarea, .field select{width:100%;padding:11px 13px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;color:var(--text-primary);font-size:13px;font-family:'Inter',sans-serif;resize:vertical;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:none;border-color:var(--cyan);}
+  .field-row{display:flex;gap:10px;}
+  .field-row .field{flex:1;}
+  .modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+  .modal-actions .btn{flex:1;justify-content:center;min-width:100px;}
+
+  .loading-row{display:flex;align-items:center;gap:8px;color:var(--text-muted);font-size:12px;padding:16px 0;}
+  .spin{width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .mobile-toggle{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--navy-card);border:1px solid var(--border);border-radius:10px;width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer;}
+  @media(max-width:860px){
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.open{transform:translateX(0);}
+    .main{margin-left:0;padding:32px 20px 60px;}
+    .mobile-toggle{display:flex;}
+    .topbar{margin-top:36px;}
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="mobile-toggle" id="mobileToggle">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <img src="https://res.cloudinary.com/hztm3zo8/image/upload/v1783966839/Purple_and_Blue_Grdient_Simple_Minimalist_Elegant_Website_Logo_20260713_211434_0000_ndnwtt.png" alt="MtaaniOS">
+    <span>MtaaniOS</span>
+  </div>
+  <nav>
+    <a href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+    <a href="clients.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>Clients</a>
+    <a href="leads.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h12"/></svg>Leads</a>
+    <a href="bookings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Bookings</a>
+    <a href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Projects</a>
+    <a href="payments.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg>Payments</a>
+    <a href="tasks.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Tasks</a>
+    <a href="calendar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar</a>
+    <a href="content.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Content</a>
+    <a href="team.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 21v-1a6 6 0 0112 0v1"/><circle cx="17" cy="9" r="2.5"/><path d="M15 21v-1a4 4 0 016 0v1"/></svg>Team</a>
+    <a href="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Reports</a>
+    <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="signout-btn" id="signoutBtn">Sign out</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1>Tasks</h1>
+      <p id="taskCount">Loading tasks</p>
+    </div>
+    <button class="btn btn-primary" id="addTaskBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add task
+    </button>
+  </div>
+
+  <div class="view-tabs" id="viewTabs">
+    <button class="view-tab active" data-view="today">Today</button>
+    <button class="view-tab" data-view="week">This week</button>
+    <button class="view-tab" data-view="overdue">Overdue</button>
+    <button class="view-tab" data-view="all">All</button>
+  </div>
+
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="Search tasks">
+  </div>
+
+  <div id="taskListWrap">
+    <div class="loading-row"><div class="spin"></div>Loading tasks</div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add task</h2>
+    <div class="field"><label>Title</label><input type="text" id="fTitle" placeholder="What needs to happen"></div>
+    <div class="field-row">
+      <div class="field"><label>Due date</label><input type="date" id="fDueDate"></div>
+      <div class="field"><label>Priority</label>
+        <select id="fPriority">
+          <option>Medium</option>
+          <option>High</option>
+          <option>Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Related client</label>
+      <select id="fClient"><option value="">None</option></select>
+    </div>
+    <div class="field"><label>Related project</label>
+      <select id="fProject"><option value="">None</option></select>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="fNotes" rows="2" placeholder="Optional detail"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelModalBtn">Cancel</button>
+      <button class="btn btn-danger" id="deleteTaskBtn" style="display:none;">Delete</button>
+      <button class="btn btn-primary" id="saveTaskBtn">Save task</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs, doc, addDoc, updateDoc, deleteDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-ndNW__8PMGJB3QHnFD9J7XtQh82EqjA",
+    authDomain: "mtaanios.firebaseapp.com",
+    projectId: "mtaanios",
+    storageBucket: "mtaanios.firebasestorage.app",
+    messagingSenderId: "407302134340",
+    appId: "1:407302134340:web:697218f5731b0314a23a11"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let allTasks = [];
+  let allClients = [];
+  let allProjects = [];
+  let activeView = "today";
+  let editingTaskId = null;
+
+  onAuthStateChanged(auth, (user) => {
+    if(!user){ window.location.href = "login.html"; return; }
+    currentUser = user;
+    loadDropdowns();
+    loadTasks();
+  });
+
+  document.getElementById("signoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  });
+
+  const sidebar = document.getElementById("sidebar");
+  document.getElementById("mobileToggle").addEventListener("click", () => sidebar.classList.toggle("open"));
+
+  const savedTheme = localStorage.getItem("mtaanios-theme") || "dark";
+  document.body.setAttribute("data-theme", savedTheme);
+
+  async function logActivity(description){
+    try{
+      await addDoc(collection(db, "activity"), {
+        description, actor: currentUser ? currentUser.email : "System", timestamp: serverTimestamp()
+      });
+    } catch(err){ console.warn("Could not log activity", err.message); }
+  }
+
+  async function loadDropdowns(){
+    try{
+      const clientSnap = await getDocs(collection(db, "clients"));
+      allClients = clientSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const clientSelect = document.getElementById("fClient");
+      allClients.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.id; opt.textContent = c.name;
+        clientSelect.appendChild(opt);
+      });
+    } catch(err){ console.warn("Could not load clients", err.message); }
+
+    try{
+      const projectSnap = await getDocs(collection(db, "projects"));
+      allProjects = projectSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const projectSelect = document.getElementById("fProject");
+      allProjects.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id; opt.textContent = p.title;
+        projectSelect.appendChild(opt);
+      });
+    } catch(err){ console.warn("Could not load projects", err.message); }
+  }
+
+  async function loadTasks(){
+    try{
+      const snap = await getDocs(collection(db, "tasks"));
+      allTasks = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      applyFilters();
+    } catch(err){
+      console.warn("Could not load tasks", err.message);
+      allTasks = [];
+      applyFilters();
+    }
+  }
+
+  document.querySelectorAll(".view-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeView = tab.dataset.view;
+      applyFilters();
+    });
+  });
+  document.getElementById("searchInput").addEventListener("input", applyFilters);
+
+  function dateRange(){
+    const now = new Date();
+    const today = now.toISOString().split("T")[0];
+    const weekAhead = new Date(now.getTime() + 7*86400000).toISOString().split("T")[0];
+    return { today, weekAhead };
+  }
+
+  function applyFilters(){
+    const { today, weekAhead } = dateRange();
+    const term = document.getElementById("searchInput").value.toLowerCase();
+    let filtered = allTasks.filter(t => (t.title || "").toLowerCase().includes(term));
+
+    if(activeView === "today"){
+      filtered = filtered.filter(t => t.dueDate === today);
+    } else if(activeView === "week"){
+      filtered = filtered.filter(t => t.dueDate && t.dueDate >= today && t.dueDate <= weekAhead);
+    } else if(activeView === "overdue"){
+      filtered = filtered.filter(t => t.dueDate && t.dueDate < today && t.status !== "Done");
+    }
+
+    filtered = [...filtered].sort((a,b) => {
+      if(a.status === "Done" && b.status !== "Done") return 1;
+      if(a.status !== "Done" && b.status === "Done") return -1;
+      return (a.dueDate || "9999").localeCompare(b.dueDate || "9999");
+    });
+
+    renderTasks(filtered);
+  }
+
+  function renderTasks(list){
+    const wrap = document.getElementById("taskListWrap");
+    document.getElementById("taskCount").textContent = allTasks.length === 0 ? "No tasks yet" : allTasks.filter(t => t.status !== "Done").length + " open, " + allTasks.length + " total";
+
+    if(list.length === 0){
+      wrap.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        <p>Nothing here. Add a task to get started.</p>
+      </div>`;
+      return;
+    }
+
+    const { today } = dateRange();
+    wrap.innerHTML = list.map(t => {
+      const isDone = t.status === "Done";
+      const overdue = t.dueDate && t.dueDate < today && !isDone;
+      const priority = (t.priority || "Medium").toLowerCase();
+      return `<div class="task-item ${isDone ? "done" : ""}" data-id="${t.id}">
+        <input type="checkbox" class="task-checkbox" data-toggle="${t.id}" ${isDone ? "checked" : ""}>
+        <div class="task-body" data-open="${t.id}">
+          <div class="task-title ${isDone ? "done" : ""}">${t.title || "Untitled task"}</div>
+          <div class="task-meta">
+            <span><span class="priority-dot ${priority}"></span>${t.priority || "Medium"}</span>
+            <span class="due-tag ${overdue ? "overdue" : ""}">${t.dueDate ? (overdue ? "Overdue " : "Due ") + t.dueDate : "No due date"}</span>
+            ${t.relatedClientName ? `<span>${t.relatedClientName}</span>` : ""}
+            ${t.relatedProjectName ? `<span>${t.relatedProjectName}</span>` : ""}
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+
+    wrap.querySelectorAll("[data-toggle]").forEach(cb => {
+      cb.addEventListener("click", (e) => e.stopPropagation());
+      cb.addEventListener("change", async () => {
+        const newStatus = cb.checked ? "Done" : "Pending";
+        await updateDoc(doc(db, "tasks", cb.dataset.toggle), { status: newStatus });
+        const t = allTasks.find(x => x.id === cb.dataset.toggle);
+        await logActivity(`Task ${newStatus === "Done" ? "completed" : "reopened"}: ${t?.title || ""}`);
+        await loadTasks();
+      });
+    });
+    wrap.querySelectorAll("[data-open]").forEach(el => {
+      el.addEventListener("click", () => {
+        const t = allTasks.find(x => x.id === el.dataset.open);
+        if(t) openModal(t);
+      });
+    });
+  }
+
+  const modalOverlay = document.getElementById("modalOverlay");
+  document.getElementById("addTaskBtn").addEventListener("click", () => openModal());
+  document.getElementById("cancelModalBtn").addEventListener("click", () => modalOverlay.classList.remove("open"));
+
+  function openModal(task){
+    editingTaskId = task ? task.id : null;
+    document.getElementById("modalTitle").textContent = task ? "Edit task" : "Add task";
+    document.getElementById("fTitle").value = task?.title || "";
+    document.getElementById("fDueDate").value = task?.dueDate || "";
+    document.getElementById("fPriority").value = task?.priority || "Medium";
+    document.getElementById("fClient").value = task?.relatedClientId || "";
+    document.getElementById("fProject").value = task?.relatedProjectId || "";
+    document.getElementById("fNotes").value = task?.notes || "";
+    document.getElementById("deleteTaskBtn").style.display = task ? "block" : "none";
+    modalOverlay.classList.add("open");
+  }
+
+  document.getElementById("saveTaskBtn").addEventListener("click", async () => {
+    const title = document.getElementById("fTitle").value.trim();
+    if(!title){ alert("Task title is required."); return; }
+
+    const clientId = document.getElementById("fClient").value;
+    const projectId = document.getElementById("fProject").value;
+    const client = allClients.find(c => c.id === clientId);
+    const project = allProjects.find(p => p.id === projectId);
+
+    const data = {
+      title,
+      dueDate: document.getElementById("fDueDate").value,
+      priority: document.getElementById("fPriority").value,
+      relatedClientId: clientId || "",
+      relatedClientName: client ? client.name : "",
+      relatedProjectId: projectId || "",
+      relatedProjectName: project ? project.title : "",
+      notes: document.getElementById("fNotes").value.trim(),
+      status: editingTaskId ? (allTasks.find(t => t.id === editingTaskId)?.status || "Pending") : "Pending"
+    };
+
+    try{
+      if(editingTaskId){
+        await updateDoc(doc(db, "tasks", editingTaskId), data);
+        await logActivity(`Task updated: ${title}`);
+      } else {
+        await addDoc(collection(db, "tasks"), { ...data, createdAt: serverTimestamp() });
+        await logActivity(`New task added: ${title}`);
+      }
+      modalOverlay.classList.remove("open");
+      await loadTasks();
+    } catch(err){
+      alert("Could not save task.");
+      console.error(err);
+    }
+  });
+
+  document.getElementById("deleteTaskBtn").addEventListener("click", async () => {
+    if(!editingTaskId) return;
+    const t = allTasks.find(x => x.id === editingTaskId);
+    if(!confirm(`Delete "${t?.title}"?`)) return;
+    try{
+      await deleteDoc(doc(db, "tasks", editingTaskId));
+      await logActivity(`Deleted task: ${t?.title || ""}`);
+      modalOverlay.classList.remove("open");
+      await loadTasks();
+    } catch(err){
+      alert("Could not delete task.");
+    }
+  });
+</script>
+
+</body>
+</html>

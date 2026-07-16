@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MtaaniOS | Settings</title>
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/hztm3zo8/image/upload/v1783966839/Purple_and_Blue_Grdient_Simple_Minimalist_Elegant_Website_Logo_20260713_211434_0000_ndnwtt.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0D0B2B;--navy-soft:#141230;--navy-card:#181633;
+    --cyan:#38B6FF;--purple:#9B59B6;--text-primary:#F4F5F9;--text-muted:#9A9AB5;
+    --border:rgba(255,255,255,0.08);--danger:#FF6B6B;--success:#4ADE80;--warn:#FFC107;
+    --sidebar-w:240px;
+  }
+  [data-theme="light"]{
+    --navy:#F4F5F9;--navy-soft:#FFFFFF;--navy-card:#FFFFFF;
+    --text-primary:#171630;--text-muted:#6B6B85;--border:rgba(13,11,43,0.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--navy);font-family:'Inter',sans-serif;color:var(--text-primary);min-height:100vh;display:flex;transition:background 0.3s, color 0.3s;}
+  .sidebar{width:var(--sidebar-w);background:var(--navy-soft);border-right:1px solid var(--border);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;padding:24px 16px;z-index:100;transition:transform 0.3s;}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 24px;margin-bottom:8px;border-bottom:1px solid var(--border);}
+  .brand img{width:32px;height:32px;border-radius:8px;}
+  .brand span{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;}
+  nav{flex:1;display:flex;flex-direction:column;gap:2px;margin-top:16px;overflow-y:auto;}
+  nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:500;transition:background 0.15s, color 0.15s;}
+  nav a svg{width:16px;height:16px;flex-shrink:0;}
+  nav a:hover{background:rgba(56,182,255,0.08);color:var(--text-primary);}
+  nav a.active{background:linear-gradient(135deg, rgba(56,182,255,0.15), rgba(155,89,182,0.15));color:var(--cyan);}
+  .sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:8px;position:relative;}
+  .signout-btn{width:100%;padding:10px 12px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--danger);font-size:13px;font-weight:500;cursor:pointer;text-align:left;font-family:'Inter',sans-serif;}
+  .signout-btn:hover{background:rgba(255,107,107,0.08);}
+
+  .main{margin-left:var(--sidebar-w);flex:1;padding:32px 40px 60px;max-width:720px;}
+  .topbar{margin-bottom:28px;}
+  .topbar h1{font-family:'Poppins',sans-serif;font-weight:600;font-size:24px;}
+  .topbar p{color:var(--text-muted);font-size:13px;margin-top:2px;}
+
+  .panel{background:var(--navy-card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+  .panel h2{font-family:'Poppins',sans-serif;font-size:15px;font-weight:600;margin-bottom:18px;}
+  .panel-danger{border-color:rgba(255,107,107,0.3);}
+  .panel-danger h2{color:var(--danger);}
+
+  .avatar-row{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+  .avatar-preview{
+    width:72px;height:72px;border-radius:50%;object-fit:cover;
+    background:linear-gradient(135deg, var(--cyan), var(--purple));
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:#fff;
+    flex-shrink:0;
+  }
+  .avatar-actions{display:flex;flex-direction:column;gap:8px;}
+  .avatar-actions span{font-size:11px;color:var(--text-muted);}
+
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:6px;}
+  .field input{width:100%;padding:11px 13px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;color:var(--text-primary);font-size:13px;font-family:'Inter',sans-serif;}
+  .field input:focus{outline:none;border-color:var(--cyan);}
+  .field input:disabled{opacity:0.5;cursor:not-allowed;}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:none;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;}
+  .btn-primary{background:linear-gradient(135deg, var(--cyan), var(--purple));color:#fff;}
+  .btn-primary:hover{opacity:0.92;}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-ghost{background:none;border:1px solid var(--border);color:var(--text-primary);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.04);}
+  .btn-danger{background:rgba(255,107,107,0.1);color:var(--danger);border:1px solid rgba(255,107,107,0.2);}
+  .btn-danger:hover{background:rgba(255,107,107,0.18);}
+  .btn-sm{padding:7px 12px;font-size:12px;}
+
+  .toggle-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);}
+  .toggle-row:last-child{border-bottom:none;}
+  .toggle-info{display:flex;flex-direction:column;gap:2px;}
+  .toggle-title{font-size:13px;font-weight:500;}
+  .toggle-sub{font-size:11px;color:var(--text-muted);}
+  .switch{width:40px;height:22px;background:var(--border);border-radius:20px;position:relative;cursor:pointer;border:none;flex-shrink:0;}
+  .switch::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:transform 0.2s;}
+  .switch.on{background:linear-gradient(135deg, var(--cyan), var(--purple));}
+  .switch.on::after{transform:translateX(18px);}
+
+  .status-msg{font-size:12px;padding:10px 12px;border-radius:8px;margin-top:12px;display:none;}
+  .status-msg.show{display:block;}
+  .status-msg.success{background:rgba(74,222,128,0.1);color:var(--success);}
+  .status-msg.error{background:rgba(255,107,107,0.1);color:var(--danger);}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--navy-soft);border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:420px;}
+  .modal h2{font-family:'Poppins',sans-serif;font-size:17px;font-weight:600;margin-bottom:10px;color:var(--danger);}
+  .modal p{font-size:13px;color:var(--text-muted);line-height:1.6;margin-bottom:16px;}
+  .modal-actions{display:flex;gap:10px;margin-top:18px;}
+  .modal-actions .btn{flex:1;justify-content:center;}
+
+  .mobile-toggle{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--navy-card);border:1px solid var(--border);border-radius:10px;width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer;}
+  @media(max-width:860px){
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.open{transform:translateX(0);}
+    .main{margin-left:0;padding:32px 20px 60px;}
+    .mobile-toggle{display:flex;}
+    .topbar{margin-top:36px;}
+  }
+
+  .alert-bell{
+    width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;
+    background:none;border:1px solid var(--border);border-radius:10px;
+    color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;
+    font-family:'Inter',sans-serif;margin-bottom:8px;position:relative;
+  }
+  .alert-bell:hover{background:rgba(56,182,255,0.08);color:var(--text-primary);}
+  .alert-bell svg{width:16px;height:16px;flex-shrink:0;}
+  .alert-badge{
+    margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;
+    padding:2px 7px;border-radius:20px;line-height:1.4;
+  }
+  .alert-panel{
+    position:absolute;bottom:100%;left:16px;right:16px;margin-bottom:8px;
+    background:var(--navy-soft);border:1px solid var(--border);border-radius:12px;
+    padding:14px;max-height:280px;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,0.4);
+    z-index:250;
+  }
+  .alert-panel-title{font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-primary);}
+  .alert-item{display:flex;flex-direction:column;gap:1px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+  .alert-item:last-child{border-bottom:none;}
+  .alert-item-title{color:var(--text-primary);font-weight:500;}
+  .alert-item-sub{color:var(--text-muted);font-size:11px;}
+  .alert-empty{color:var(--text-muted);font-size:12px;padding:6px 0;}
+  nav a[href="payments.html"], nav a[href="reports.html"]{display:none;}
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="mobile-toggle" id="mobileToggle">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <img src="https://res.cloudinary.com/hztm3zo8/image/upload/v1783966839/Purple_and_Blue_Grdient_Simple_Minimalist_Elegant_Website_Logo_20260713_211434_0000_ndnwtt.png" alt="MtaaniOS">
+    <span>MtaaniOS</span>
+  </div>
+  <nav>
+    <a href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+    <a href="clients.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>Clients</a>
+    <a href="leads.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h12"/></svg>Leads</a>
+    <a href="bookings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Bookings</a>
+    <a href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Projects</a>
+    <a href="payments.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg>Payments</a>
+    <a href="tasks.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Tasks</a>
+    <a href="calendar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar</a>
+    <a href="content.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Content</a>
+    <a href="team.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 21v-1a6 6 0 0112 0v1"/><circle cx="17" cy="9" r="2.5"/><path d="M15 21v-1a4 4 0 016 0v1"/></svg>Team</a>
+    <a href="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Reports</a>
+    <a href="settings.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="alert-bell" id="alertBellBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span>Alerts</span>
+      <span class="alert-badge" id="alertBadge" style="display:none;">0</span>
+    </button>
+    <div class="alert-panel" id="alertPanel" style="display:none;">
+      <div class="alert-panel-title">Needs attention</div>
+      <div id="alertPanelList"><div class="alert-empty">All clear.</div></div>
+    </div>
+    <button class="signout-btn" id="signoutBtn">Sign out</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <h1>Settings</h1>
+    <p>Your profile, alerts, and account.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Profile</h2>
+    <div class="avatar-row">
+      <img class="avatar-preview" id="avatarPreview" src="" alt="">
+      <div class="avatar-actions">
+        <button class="btn btn-ghost btn-sm" id="uploadAvatarBtn">Change photo</button>
+        <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+        <span id="uploadStatus">JPG or PNG, uploaded via Cloudinary</span>
+      </div>
+    </div>
+    <div class="field"><label>Display name</label><input type="text" id="fName" placeholder="Your name"></div>
+    <div class="field"><label>Phone</label><input type="text" id="fPhone" placeholder="07XX XXX XXX"></div>
+    <div class="field"><label>Email</label><input type="text" id="fEmail" disabled></div>
+    <button class="btn btn-primary" id="saveProfileBtn">Save profile</button>
+    <div class="status-msg" id="profileStatus"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Appearance</h2>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-title">Light mode</span>
+        <span class="toggle-sub">Dark is the default look for MtaaniOS</span>
+      </div>
+      <button class="switch" id="themeSwitch"></button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Alerts</h2>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-title">Overdue task reminders</span>
+        <span class="toggle-sub">Get flagged when tasks pass their due date</span>
+      </div>
+      <button class="switch" id="alertTasks"></button>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-title">Lead follow-up reminders</span>
+        <span class="toggle-sub">Get flagged when a follow-up date arrives</span>
+      </div>
+      <button class="switch" id="alertLeads"></button>
+    </div>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-title">Payment reminders</span>
+        <span class="toggle-sub">Get flagged on outstanding client balances</span>
+      </div>
+      <button class="switch" id="alertPayments"></button>
+    </div>
+    <p style="font-size:11px;color:var(--text-muted);margin-top:14px;">These preferences are saved now and will drive automated reminders as that layer gets built. For now, the Today panels on your Dashboard and Leads already surface these live.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Account</h2>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-title">Reset password</span>
+        <span class="toggle-sub">We'll email you a reset link</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="resetPasswordBtn">Send link</button>
+    </div>
+  </div>
+
+  <div class="panel panel-danger">
+    <h2>Danger zone</h2>
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <span class="toggle-title">Delete account</span>
+        <span class="toggle-sub">This permanently removes your login. Business records stay intact.</span>
+      </div>
+      <button class="btn btn-danger btn-sm" id="deleteAccountBtn">Delete</button>
+    </div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="deleteModalOverlay">
+  <div class="modal">
+    <h2>Delete your account</h2>
+    <p>This cannot be undone. You will be signed out immediately and will no longer be able to log in with this email. Enter your password to confirm.</p>
+    <div class="field"><label>Password</label><input type="password" id="confirmPassword" placeholder="Your current password"></div>
+    <div class="field"><label>Type DELETE to confirm</label><input type="text" id="confirmText" placeholder="DELETE"></div>
+    <div class="status-msg" id="deleteStatus"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelDeleteBtn">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Permanently delete</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import {
+    getAuth, onAuthStateChanged, signOut, sendPasswordResetEmail,
+    reauthenticateWithCredential, EmailAuthProvider, deleteUser
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-ndNW__8PMGJB3QHnFD9J7XtQh82EqjA",
+    authDomain: "mtaanios.firebaseapp.com",
+    projectId: "mtaanios",
+    storageBucket: "mtaanios.firebasestorage.app",
+    messagingSenderId: "407302134340",
+    appId: "1:407302134340:web:697218f5731b0314a23a11"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const ADMIN_EMAIL = "mtaaniweb@gmail.com";
+
+  const CLOUDINARY_CLOUD_NAME = "hztm3zo8";
+  const CLOUDINARY_UPLOAD_PRESET = "mtaanios_unsigned";
+
+  let currentUser = null;
+  let profileData = {};
+
+
+  async function applySidebarRestrictions(user){
+    const isAdmin = user.email.toLowerCase() === ADMIN_EMAIL;
+    if(isAdmin){
+      document.querySelectorAll('nav a[href="payments.html"], nav a[href="reports.html"]').forEach(a => a.style.display = "flex");
+      return;
+    }
+    const teamLink = document.querySelector('nav a[href="team.html"]');
+    if(teamLink) teamLink.setAttribute("href", "teamdash.html");
+
+    // Team members with a Collections role need Payments access to log what
+    // they have personally collected. Reports stays admin-only regardless.
+    try{
+      const snap = await getDocs(collection(db, "team"));
+      const team = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const profile = team.find(m => (m.email || "").toLowerCase() === user.email.toLowerCase());
+      if(profile && (profile.roles || []).includes("Collections")){
+        const paymentsLink = document.querySelector('nav a[href="payments.html"]');
+        if(paymentsLink) paymentsLink.style.display = "flex";
+      }
+    } catch(err){ console.warn("Could not check team role", err.message); }
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if(!user){ window.location.href = "login.html"; return; }
+    currentUser = user;
+    applySidebarRestrictions(user);
+    initAlertBell(user, user.email.toLowerCase() === ADMIN_EMAIL);
+    loadProfile();
+  });
+
+  document.getElementById("signoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  });
+
+  const sidebar = document.getElementById("sidebar");
+  document.getElementById("mobileToggle").addEventListener("click", () => sidebar.classList.toggle("open"));
+
+  // THEME
+  const themeSwitch = document.getElementById("themeSwitch");
+  const savedTheme = localStorage.getItem("mtaanios-theme") || "dark";
+  applyTheme(savedTheme);
+  themeSwitch.addEventListener("click", () => {
+    const current = document.body.getAttribute("data-theme");
+    const next = current === "dark" ? "light" : "dark";
+    applyTheme(next);
+    localStorage.setItem("mtaanios-theme", next);
+  });
+  function applyTheme(theme){
+    document.body.setAttribute("data-theme", theme);
+    themeSwitch.classList.toggle("on", theme === "light");
+  }
+
+  function initials(name){ return (name || "?").split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase(); }
+
+  async function loadProfile(){
+    document.getElementById("fEmail").value = currentUser.email;
+    try{
+      const snap = await getDoc(doc(db, "profiles", currentUser.uid));
+      profileData = snap.exists() ? snap.data() : {};
+    } catch(err){
+      profileData = {};
+    }
+
+    document.getElementById("fName").value = profileData.displayName || "";
+    document.getElementById("fPhone").value = profileData.phone || "";
+
+    const avatarEl = document.getElementById("avatarPreview");
+    if(profileData.avatarUrl){
+      avatarEl.src = profileData.avatarUrl;
+      avatarEl.style.color = "transparent";
+    } else {
+      avatarEl.removeAttribute("src");
+      avatarEl.textContent = initials(profileData.displayName || currentUser.email);
+    }
+
+    document.getElementById("alertTasks").classList.toggle("on", profileData.alertTasks !== false);
+    document.getElementById("alertLeads").classList.toggle("on", profileData.alertLeads !== false);
+    document.getElementById("alertPayments").classList.toggle("on", profileData.alertPayments !== false);
+  }
+
+  // TOGGLES
+  ["alertTasks","alertLeads","alertPayments"].forEach(id => {
+    document.getElementById(id).addEventListener("click", async () => {
+      const btn = document.getElementById(id);
+      btn.classList.toggle("on");
+      const key = id;
+      const value = btn.classList.contains("on");
+      try{
+        await setDoc(doc(db, "profiles", currentUser.uid), { [key]: value }, { merge: true });
+      } catch(err){ console.warn("Could not save preference", err.message); }
+    });
+  });
+
+  // AVATAR UPLOAD
+  document.getElementById("uploadAvatarBtn").addEventListener("click", () => {
+    document.getElementById("avatarInput").click();
+  });
+
+  document.getElementById("avatarInput").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const statusEl = document.getElementById("uploadStatus");
+    statusEl.textContent = "Uploading...";
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+    try{
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: "POST", body: formData
+      });
+      const data = await res.json();
+      if(data.secure_url){
+        await setDoc(doc(db, "profiles", currentUser.uid), { avatarUrl: data.secure_url }, { merge: true });
+        document.getElementById("avatarPreview").src = data.secure_url;
+        statusEl.textContent = "Photo updated";
+      } else {
+        statusEl.textContent = "Upload failed. Check the Cloudinary preset is unsigned.";
+      }
+    } catch(err){
+      statusEl.textContent = "Upload failed. Check your connection.";
+    }
+  });
+
+  // SAVE PROFILE
+  document.getElementById("saveProfileBtn").addEventListener("click", async () => {
+    const statusEl = document.getElementById("profileStatus");
+    const data = {
+      displayName: document.getElementById("fName").value.trim(),
+      phone: document.getElementById("fPhone").value.trim()
+    };
+    try{
+      await setDoc(doc(db, "profiles", currentUser.uid), data, { merge: true });
+      statusEl.textContent = "Profile saved.";
+      statusEl.className = "status-msg show success";
+      const avatarEl = document.getElementById("avatarPreview");
+      if(!profileData.avatarUrl) avatarEl.textContent = initials(data.displayName || currentUser.email);
+    } catch(err){
+      statusEl.textContent = "Could not save profile.";
+      statusEl.className = "status-msg show error";
+    }
+  });
+
+  // RESET PASSWORD
+  document.getElementById("resetPasswordBtn").addEventListener("click", async () => {
+    try{
+      await sendPasswordResetEmail(auth, currentUser.email);
+      alert("Reset link sent to " + currentUser.email);
+    } catch(err){
+      alert("Could not send reset link.");
+    }
+  });
+
+  // DELETE ACCOUNT
+  const deleteModalOverlay = document.getElementById("deleteModalOverlay");
+  document.getElementById("deleteAccountBtn").addEventListener("click", () => {
+    document.getElementById("confirmPassword").value = "";
+    document.getElementById("confirmText").value = "";
+    document.getElementById("deleteStatus").className = "status-msg";
+    deleteModalOverlay.classList.add("open");
+  });
+  document.getElementById("cancelDeleteBtn").addEventListener("click", () => deleteModalOverlay.classList.remove("open"));
+
+  document.getElementById("confirmDeleteBtn").addEventListener("click", async () => {
+    const password = document.getElementById("confirmPassword").value;
+    const confirmText = document.getElementById("confirmText").value;
+    const statusEl = document.getElementById("deleteStatus");
+
+    if(confirmText !== "DELETE"){
+      statusEl.textContent = "Type DELETE exactly to confirm.";
+      statusEl.className = "status-msg show error";
+      return;
+    }
+    if(!password){
+      statusEl.textContent = "Enter your password to confirm.";
+      statusEl.className = "status-msg show error";
+      return;
+    }
+
+    try{
+      const credential = EmailAuthProvider.credential(currentUser.email, password);
+      await reauthenticateWithCredential(currentUser, credential);
+      try{ await deleteDoc(doc(db, "profiles", currentUser.uid)); } catch(e){}
+      await deleteUser(currentUser);
+      window.location.href = "login.html";
+    } catch(err){
+      let msg = "Could not delete account. Check your password.";
+      if(err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") msg = "Incorrect password.";
+      statusEl.textContent = msg;
+      statusEl.className = "status-msg show error";
+    }
+  });
+
+  // ===== ALERT BELL =====
+  async function initAlertBell(user, isAdminUser){
+    let myName = null;
+    if(!isAdminUser){
+      try{
+        const teamSnap = await getDocs(collection(db, "team"));
+        const teamList = teamSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const profile = teamList.find(m => (m.email || "").toLowerCase() === user.email.toLowerCase());
+        myName = profile ? profile.name : null;
+      } catch(err){ myName = null; }
+    }
+
+    const todayStr = new Date().toISOString().split("T")[0];
+    const items = [];
+
+    try{
+      const taskSnap = await getDocs(collection(db, "tasks"));
+      const tasks = taskSnap.docs.map(d => d.data());
+      const overdue = tasks.filter(t => t.dueDate && t.dueDate < todayStr && t.status !== "Done" && (isAdminUser || t.assignedTo === myName));
+      overdue.forEach(t => items.push({ type: "task", title: `Overdue: ${t.title || "Task"}`, sub: t.dueDate }));
+    } catch(err){}
+
+    try{
+      const leadSnap = await getDocs(collection(db, "leads"));
+      const leads = leadSnap.docs.map(d => d.data());
+      const due = leads.filter(l => l.followUpDate && l.followUpDate <= todayStr && l.stage !== "Won" && l.stage !== "Lost" && (isAdminUser || l.assignedTo === myName));
+      due.forEach(l => items.push({ type: "lead", title: `Follow up: ${l.name || "Lead"}`, sub: l.business || "" }));
+    } catch(err){}
+
+    if(isAdminUser){
+      try{
+        const paySnap = await getDocs(collection(db, "payments"));
+        const payments = paySnap.docs.map(d => d.data());
+        const outstanding = payments.filter(p => Number(p.amountExpected || 0) > Number(p.amountReceived || 0));
+        outstanding.forEach(p => items.push({ type: "payment", title: `Outstanding: ${p.clientName || "Client"}`, sub: "KES " + (Number(p.amountExpected||0) - Number(p.amountReceived||0)).toLocaleString("en-KE") }));
+      } catch(err){}
+    }
+
+    const badge = document.getElementById("alertBadge");
+    const listEl = document.getElementById("alertPanelList");
+    if(items.length === 0){
+      badge.style.display = "none";
+      listEl.innerHTML = '<div class="alert-empty">All clear.</div>';
+    } else {
+      badge.style.display = "inline-block";
+      badge.textContent = items.length;
+      listEl.innerHTML = items.map(i => `<div class="alert-item"><span class="alert-item-title">${i.title}</span><span class="alert-item-sub">${i.sub}</span></div>`).join("");
+    }
+  }
+
+  const alertBellBtn = document.getElementById("alertBellBtn");
+  const alertPanel = document.getElementById("alertPanel");
+  if(alertBellBtn){
+    alertBellBtn.addEventListener("click", () => {
+      alertPanel.style.display = alertPanel.style.display === "none" ? "block" : "none";
+    });
+    document.addEventListener("click", (e) => {
+      if(!alertBellBtn.contains(e.target) && !alertPanel.contains(e.target)){
+        alertPanel.style.display = "none";
+      }
+    });
+  }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MtaaniOS | Leads</title>
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/hztm3zo8/image/upload/v1783966839/Purple_and_Blue_Grdient_Simple_Minimalist_Elegant_Website_Logo_20260713_211434_0000_ndnwtt.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0D0B2B;--navy-soft:#141230;--navy-card:#181633;
+    --cyan:#38B6FF;--purple:#9B59B6;--text-primary:#F4F5F9;--text-muted:#9A9AB5;
+    --border:rgba(255,255,255,0.08);--danger:#FF6B6B;--success:#4ADE80;--warn:#FFC107;
+    --sidebar-w:240px;
+  }
+  [data-theme="light"]{
+    --navy:#F4F5F9;--navy-soft:#FFFFFF;--navy-card:#FFFFFF;
+    --text-primary:#171630;--text-muted:#6B6B85;--border:rgba(13,11,43,0.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--navy);font-family:'Inter',sans-serif;color:var(--text-primary);min-height:100vh;display:flex;transition:background 0.3s, color 0.3s;}
+  .sidebar{width:var(--sidebar-w);background:var(--navy-soft);border-right:1px solid var(--border);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;padding:24px 16px;z-index:100;transition:transform 0.3s;}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 24px;margin-bottom:8px;border-bottom:1px solid var(--border);}
+  .brand img{width:32px;height:32px;border-radius:8px;}
+  .brand span{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;}
+  nav{flex:1;display:flex;flex-direction:column;gap:2px;margin-top:16px;overflow-y:auto;}
+  nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:500;transition:background 0.15s, color 0.15s;}
+  nav a svg{width:16px;height:16px;flex-shrink:0;}
+  nav a:hover{background:rgba(56,182,255,0.08);color:var(--text-primary);}
+  nav a.active{background:linear-gradient(135deg, rgba(56,182,255,0.15), rgba(155,89,182,0.15));color:var(--cyan);}
+  .sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:8px;position:relative;}
+  .signout-btn{width:100%;padding:10px 12px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--danger);font-size:13px;font-weight:500;cursor:pointer;text-align:left;font-family:'Inter',sans-serif;}
+  .signout-btn:hover{background:rgba(255,107,107,0.08);}
+
+  .main{margin-left:var(--sidebar-w);flex:1;padding:32px 40px 60px;max-width:1100px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:16px;}
+  .topbar h1{font-family:'Poppins',sans-serif;font-weight:600;font-size:24px;}
+  .topbar p{color:var(--text-muted);font-size:13px;margin-top:2px;}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:none;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;}
+  .btn-primary{background:linear-gradient(135deg, var(--cyan), var(--purple));color:#fff;}
+  .btn-primary:hover{opacity:0.92;}
+  .btn-ghost{background:none;border:1px solid var(--border);color:var(--text-primary);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.04);}
+  .btn-danger{background:rgba(255,107,107,0.1);color:var(--danger);border:1px solid rgba(255,107,107,0.2);}
+  .btn-success{background:rgba(74,222,128,0.12);color:var(--success);border:1px solid rgba(74,222,128,0.25);}
+  .btn-sm{padding:7px 12px;font-size:12px;}
+
+  .followup-panel{
+    background:var(--navy-card);border:1px solid var(--border);border-radius:16px;
+    padding:18px 20px;margin-bottom:20px;
+  }
+  .followup-panel h2{font-family:'Poppins',sans-serif;font-size:14px;font-weight:600;margin-bottom:10px;}
+  .followup-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .followup-item:last-child{border-bottom:none;}
+  .followup-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px;background:rgba(255,193,7,0.15);color:var(--warn);text-transform:uppercase;}
+  .followup-badge.overdue{background:rgba(255,107,107,0.15);color:var(--danger);}
+
+  .stage-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:20px;padding-bottom:4px;}
+  .stage-tab{
+    flex-shrink:0;padding:8px 14px;border-radius:20px;border:1px solid var(--border);
+    background:var(--navy-card);color:var(--text-muted);font-size:12px;font-weight:600;
+    cursor:pointer;white-space:nowrap;font-family:'Inter',sans-serif;
+  }
+  .stage-tab.active{background:linear-gradient(135deg, rgba(56,182,255,0.18), rgba(155,89,182,0.18));color:var(--cyan);border-color:transparent;}
+
+  .search-row{display:flex;gap:10px;margin-bottom:20px;}
+  .search-row input{flex:1;padding:11px 14px;background:var(--navy-card);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:13px;}
+  .search-row input:focus{outline:none;border-color:var(--cyan);}
+
+  .lead-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .lead-card{background:var(--navy-card);border:1px solid var(--border);border-radius:16px;padding:18px;cursor:pointer;transition:transform 0.15s, box-shadow 0.15s;position:relative;overflow:hidden;}
+  .lead-card:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(56,182,255,0.1);}
+  .lead-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+  .lead-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;}
+  .lead-business{font-size:12px;color:var(--text-muted);margin-bottom:10px;}
+  .lead-meta{font-size:11px;color:var(--text-muted);display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+  .stage-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.02em;white-space:nowrap;}
+  .stage-badge.new{background:rgba(56,182,255,0.15);color:var(--cyan);}
+  .stage-badge.contacted{background:rgba(155,89,182,0.15);color:var(--purple);}
+  .stage-badge.interested{background:rgba(255,193,7,0.15);color:var(--warn);}
+  .stage-badge.proposal{background:rgba(255,193,7,0.2);color:var(--warn);}
+  .stage-badge.negotiation{background:rgba(255,140,0,0.18);color:#FF8C00;}
+  .stage-badge.won{background:rgba(74,222,128,0.15);color:var(--success);}
+  .stage-badge.lost{background:rgba(255,107,107,0.15);color:var(--danger);}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
+  .empty-state svg{width:40px;height:40px;margin-bottom:14px;opacity:0.4;}
+  .empty-state p{font-size:13px;}
+  .empty-state a{color:var(--cyan);text-decoration:none;font-weight:500;}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--navy-soft);border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;}
+  .modal h2{font-family:'Poppins',sans-serif;font-size:17px;font-weight:600;margin-bottom:18px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:6px;}
+  .field input, .field textarea, .field select{width:100%;padding:11px 13px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;color:var(--text-primary);font-size:13px;font-family:'Inter',sans-serif;resize:vertical;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:none;border-color:var(--cyan);}
+  .field-row{display:flex;gap:10px;}
+  .field-row .field{flex:1;}
+  .modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+  .modal-actions .btn{flex:1;justify-content:center;min-width:100px;}
+
+  .loading-row{display:flex;align-items:center;gap:8px;color:var(--text-muted);font-size:12px;padding:16px 0;}
+  .spin{width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .mobile-toggle{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--navy-card);border:1px solid var(--border);border-radius:10px;width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer;}
+  @media(max-width:860px){
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.open{transform:translateX(0);}
+    .main{margin-left:0;padding:32px 20px 60px;}
+    .mobile-toggle{display:flex;}
+    .topbar{margin-top:36px;}
+  }
+
+  /* DESKTOP: cards expand beyond the fixed 2-column mobile layout */
+  @media(min-width:900px){
+  .lead-grid{grid-template-columns:repeat(auto-fill, minmax(270px, 1fr));}
+  }
+
+  .alert-bell{
+    width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;
+    background:none;border:1px solid var(--border);border-radius:10px;
+    color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;
+    font-family:'Inter',sans-serif;margin-bottom:8px;position:relative;
+  }
+  .alert-bell:hover{background:rgba(56,182,255,0.08);color:var(--text-primary);}
+  .alert-bell svg{width:16px;height:16px;flex-shrink:0;}
+  .alert-badge{
+    margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;
+    padding:2px 7px;border-radius:20px;line-height:1.4;
+  }
+  .alert-panel{
+    position:absolute;bottom:100%;left:16px;right:16px;margin-bottom:8px;
+    background:var(--navy-soft);border:1px solid var(--border);border-radius:12px;
+    padding:14px;max-height:280px;overflow-y:auto;box-shadow:0 12px 30px rgba(0,0,0,0.4);
+    z-index:250;
+  }
+  .alert-panel-title{font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;margin-bottom:10px;color:var(--text-primary);}
+  .alert-item{display:flex;flex-direction:column;gap:1px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+  .alert-item:last-child{border-bottom:none;}
+  .alert-item-title{color:var(--text-primary);font-weight:500;}
+  .alert-item-sub{color:var(--text-muted);font-size:11px;}
+  .alert-empty{color:var(--text-muted);font-size:12px;padding:6px 0;}
+  nav a[href="payments.html"], nav a[href="reports.html"]{display:none;}
+
+  @media(max-width:400px){
+    .lead-card{padding:14px;}
+    .lead-name{font-size:14px;word-break:break-word;}
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="mobile-toggle" id="mobileToggle">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <img src="https://res.cloudinary.com/hztm3zo8/image/upload/v1783966839/Purple_and_Blue_Grdient_Simple_Minimalist_Elegant_Website_Logo_20260713_211434_0000_ndnwtt.png" alt="MtaaniOS">
+    <span>MtaaniOS</span>
+  </div>
+  <nav>
+    <a href="admin.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+    <a href="clients.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>Clients</a>
+    <a href="leads.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h12"/></svg>Leads</a>
+    <a href="bookings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Bookings</a>
+    <a href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Projects</a>
+    <a href="payments.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg>Payments</a>
+    <a href="tasks.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Tasks</a>
+    <a href="calendar.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar</a>
+    <a href="content.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Content</a>
+    <a href="team.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 21v-1a6 6 0 0112 0v1"/><circle cx="17" cy="9" r="2.5"/><path d="M15 21v-1a4 4 0 016 0v1"/></svg>Team</a>
+    <a href="reports.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Reports</a>
+    <a href="settings.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="alert-bell" id="alertBellBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span>Alerts</span>
+      <span class="alert-badge" id="alertBadge" style="display:none;">0</span>
+    </button>
+    <div class="alert-panel" id="alertPanel" style="display:none;">
+      <div class="alert-panel-title">Needs attention</div>
+      <div id="alertPanelList"><div class="alert-empty">All clear.</div></div>
+    </div>
+    <button class="signout-btn" id="signoutBtn">Sign out</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div>
+      <h1>Leads</h1>
+      <p id="leadCount">Loading leads</p>
+    </div>
+    <button class="btn btn-primary" id="addLeadBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add lead
+    </button>
+  </div>
+
+  <div class="followup-panel">
+    <h2>Follow-ups due</h2>
+    <div id="followupList"><div class="loading-row"><div class="spin"></div>Checking follow-ups</div></div>
+  </div>
+
+  <div class="stage-tabs" id="stageTabs">
+    <button class="stage-tab active" data-stage="all">All</button>
+    <button class="stage-tab" data-stage="New Lead">New Lead</button>
+    <button class="stage-tab" data-stage="Contacted">Contacted</button>
+    <button class="stage-tab" data-stage="Interested">Interested</button>
+    <button class="stage-tab" data-stage="Proposal Sent">Proposal Sent</button>
+    <button class="stage-tab" data-stage="Negotiation">Negotiation</button>
+    <button class="stage-tab" data-stage="Won">Won</button>
+    <button class="stage-tab" data-stage="Lost">Lost</button>
+  </div>
+
+  <div class="search-row">
+    <input type="text" id="searchInput" placeholder="Search by name or business">
+  </div>
+
+  <div id="leadGridWrap">
+    <div class="loading-row"><div class="spin"></div>Loading leads</div>
+  </div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add lead</h2>
+    <div class="field"><label>Name</label><input type="text" id="fName" placeholder="Lead full name"></div>
+    <div class="field-row">
+      <div class="field"><label>Phone</label><input type="text" id="fPhone" placeholder="07XX XXX XXX"></div>
+      <div class="field"><label>Business</label><input type="text" id="fBusiness" placeholder="Business name"></div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Source</label>
+        <select id="fSource">
+          <option>WhatsApp</option>
+          <option>Referral</option>
+          <option>Google Maps</option>
+          <option>Social Media</option>
+          <option>Cold Outreach</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Stage</label>
+        <select id="fStage">
+          <option>New Lead</option>
+          <option>Contacted</option>
+          <option>Interested</option>
+          <option>Proposal Sent</option>
+          <option>Negotiation</option>
+          <option>Won</option>
+          <option>Lost</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Follow-up date</label><input type="date" id="fFollowUp"></div>
+      <div class="field"><label>Assigned to</label>
+        <select id="fAssigned"><option value="">Unassigned</option></select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Deal value (KES)</label><input type="number" id="fDealValue" placeholder="15000"></div>
+      <div class="field"><label>Service tier</label>
+        <select id="fTier">
+          <option value="starter">Starter Site</option>
+          <option value="webdev">Web Development</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Notes</label><textarea id="fNotes" rows="3" placeholder="What did they ask about, budget, timeline"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelModalBtn">Cancel</button>
+      <button class="btn btn-danger" id="deleteLeadBtn" style="display:none;">Delete</button>
+      <button class="btn btn-primary" id="saveLeadBtn">Save lead</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs, doc, addDoc, updateDoc, deleteDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-ndNW__8PMGJB3QHnFD9J7XtQh82EqjA",
+    authDomain: "mtaanios.firebaseapp.com",
+    projectId: "mtaanios",
+    storageBucket: "mtaanios.firebasestorage.app",
+    messagingSenderId: "407302134340",
+    appId: "1:407302134340:web:697218f5731b0314a23a11"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const ADMIN_EMAIL = "mtaaniweb@gmail.com";
+
+  let currentUser = null;
+  let allLeads = [];
+  let allTeam = [];
+  let activeStage = "all";
+  let editingLeadId = null;
+
+  onAuthStateChanged(auth, (user) => {
+    if(!user){ window.location.href = "login.html"; return; }
+    currentUser = user;
+    applySidebarRestrictions(user);
+    initAlertBell(user, user.email.toLowerCase() === ADMIN_EMAIL);
+    loadTeamForDropdown();
+    loadLeads();
+  });
+
+  async function applySidebarRestrictions(user){
+    const isAdmin = user.email.toLowerCase() === ADMIN_EMAIL;
+    if(isAdmin){
+      document.querySelectorAll('nav a[href="payments.html"], nav a[href="reports.html"]').forEach(a => a.style.display = "flex");
+      return;
+    }
+    const teamLink = document.querySelector('nav a[href="team.html"]');
+    if(teamLink) teamLink.setAttribute("href", "teamdash.html");
+
+    // Team members with a Collections role need Payments access to log what
+    // they have personally collected. Reports stays admin-only regardless.
+    try{
+      const snap = await getDocs(collection(db, "team"));
+      const team = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const profile = team.find(m => (m.email || "").toLowerCase() === user.email.toLowerCase());
+      if(profile && (profile.roles || []).includes("Collections")){
+        const paymentsLink = document.querySelector('nav a[href="payments.html"]');
+        if(paymentsLink) paymentsLink.style.display = "flex";
+      }
+    } catch(err){ console.warn("Could not check team role", err.message); }
+  }
+
+  async function loadTeamForDropdown(){
+    try{
+      const snap = await getDocs(collection(db, "team"));
+      allTeam = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const select = document.getElementById("fAssigned");
+      allTeam.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m.name; opt.textContent = m.name;
+        select.appendChild(opt);
+      });
+    } catch(err){ console.warn("Could not load team", err.message); }
+  }
+
+  document.getElementById("signoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  });
+
+  const sidebar = document.getElementById("sidebar");
+  document.getElementById("mobileToggle").addEventListener("click", () => sidebar.classList.toggle("open"));
+
+  const savedTheme = localStorage.getItem("mtaanios-theme") || "dark";
+  document.body.setAttribute("data-theme", savedTheme);
+
+  async function logActivity(description){
+    try{
+      await addDoc(collection(db, "activity"), {
+        description, actor: currentUser ? currentUser.email : "System", timestamp: serverTimestamp()
+      });
+    } catch(err){ console.warn("Could not log activity", err.message); }
+  }
+
+  function stageClass(stage){
+    const map = {
+      "New Lead":"new", "Contacted":"contacted", "Interested":"interested",
+      "Proposal Sent":"proposal", "Negotiation":"negotiation", "Won":"won", "Lost":"lost"
+    };
+    return map[stage] || "new";
+  }
+
+  async function loadLeads(){
+    try{
+      const snap = await getDocs(collection(db, "leads"));
+      allLeads = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderFollowups();
+      applyFilters();
+    } catch(err){
+      console.warn("Could not load leads", err.message);
+      allLeads = [];
+      applyFilters();
+    }
+  }
+
+  function renderFollowups(){
+    const el = document.getElementById("followupList");
+    const todayStr = new Date().toISOString().split("T")[0];
+    const due = allLeads.filter(l => l.followUpDate && l.followUpDate <= todayStr && l.stage !== "Won" && l.stage !== "Lost");
+    if(due.length === 0){
+      el.innerHTML = `<p style="font-size:12px;color:var(--text-muted);">Nothing due. You're on top of it.</p>`;
+      return;
+    }
+    el.innerHTML = due.map(l => {
+      const overdue = l.followUpDate < todayStr;
+      return `<div class="followup-item">
+        <span>${l.name || "Unnamed lead"} &middot; ${l.business || "-"}</span>
+        <span class="followup-badge ${overdue ? "overdue" : ""}">${overdue ? "Overdue" : "Due today"}</span>
+      </div>`;
+    }).join("");
+  }
+
+  document.querySelectorAll(".stage-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".stage-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      activeStage = tab.dataset.stage;
+      applyFilters();
+    });
+  });
+
+  document.getElementById("searchInput").addEventListener("input", applyFilters);
+
+  function applyFilters(){
+    const term = document.getElementById("searchInput").value.toLowerCase();
+    let filtered = allLeads;
+    if(activeStage !== "all") filtered = filtered.filter(l => l.stage === activeStage);
+    if(term) filtered = filtered.filter(l => (l.name || "").toLowerCase().includes(term) || (l.business || "").toLowerCase().includes(term));
+    renderLeads(filtered);
+  }
+
+  function renderLeads(list){
+    const wrap = document.getElementById("leadGridWrap");
+    document.getElementById("leadCount").textContent = allLeads.length === 0 ? "No leads yet" : allLeads.length + (allLeads.length === 1 ? " lead total" : " leads total");
+
+    if(list.length === 0){
+      wrap.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12h18M3 6h18M3 18h12"/></svg>
+        <p>No leads here yet. Add one to start tracking the pipeline.</p>
+      </div>`;
+      return;
+    }
+
+    wrap.innerHTML = `<div class="lead-grid">` + list.map(l => `
+      <div class="lead-card" data-id="${l.id}">
+        <div class="lead-top">
+          <div class="lead-name">${l.name || "Unnamed lead"}</div>
+          <span class="stage-badge ${stageClass(l.stage)}">${l.stage || "New Lead"}</span>
+        </div>
+        <div class="lead-business">${l.business || "No business listed"}</div>
+        <div class="lead-meta">
+          <span>${l.phone || "No phone"}</span>
+          <span>Source: ${l.source || "-"}</span>
+          <span>Follow-up: ${l.followUpDate || "Not set"}</span>
+          ${l.assignedTo ? `<span>Assigned: ${l.assignedTo}</span>` : ""}
+        </div>
+      </div>
+    `).join("") + `</div>`;
+
+    document.querySelectorAll(".lead-card").forEach(card => {
+      card.addEventListener("click", () => openEditModal(card.dataset.id));
+    });
+  }
+
+  const modalOverlay = document.getElementById("modalOverlay");
+  document.getElementById("addLeadBtn").addEventListener("click", () => openModal());
+  document.getElementById("cancelModalBtn").addEventListener("click", () => modalOverlay.classList.remove("open"));
+
+  function openModal(lead){
+    editingLeadId = lead ? lead.id : null;
+    document.getElementById("modalTitle").textContent = lead ? "Edit lead" : "Add lead";
+    document.getElementById("fName").value = lead?.name || "";
+    document.getElementById("fPhone").value = lead?.phone || "";
+    document.getElementById("fBusiness").value = lead?.business || "";
+    document.getElementById("fSource").value = lead?.source || "WhatsApp";
+    document.getElementById("fStage").value = lead?.stage || "New Lead";
+    document.getElementById("fFollowUp").value = lead?.followUpDate || "";
+    document.getElementById("fAssigned").value = lead?.assignedTo || "";
+    document.getElementById("fDealValue").value = lead?.dealValue || "";
+    document.getElementById("fTier").value = lead?.tier || "starter";
+    document.getElementById("fNotes").value = lead?.notes || "";
+    document.getElementById("deleteLeadBtn").style.display = lead ? "block" : "none";
+    modalOverlay.classList.add("open");
+  }
+
+  function openEditModal(id){
+    const lead = allLeads.find(l => l.id === id);
+    if(lead) openModal(lead);
+  }
+
+  document.getElementById("saveLeadBtn").addEventListener("click", async () => {
+    const name = document.getElementById("fName").value.trim();
+    if(!name){ alert("Lead name is required."); return; }
+
+    const newStage = document.getElementById("fStage").value;
+    const previousLead = editingLeadId ? allLeads.find(l => l.id === editingLeadId) : null;
+    const wasWonAlready = previousLead?.stage === "Won";
+
+    const data = {
+      name,
+      phone: document.getElementById("fPhone").value.trim(),
+      business: document.getElementById("fBusiness").value.trim(),
+      source: document.getElementById("fSource").value,
+      stage: newStage,
+      followUpDate: document.getElementById("fFollowUp").value,
+      assignedTo: document.getElementById("fAssigned").value,
+      dealValue: Number(document.getElementById("fDealValue").value || 0),
+      tier: document.getElementById("fTier").value,
+      notes: document.getElementById("fNotes").value.trim()
+    };
+
+    try{
+      if(editingLeadId){
+        await updateDoc(doc(db, "leads", editingLeadId), data);
+        await logActivity(`Lead updated: ${name} (${newStage})`);
+      } else {
+        await addDoc(collection(db, "leads"), { ...data, createdAt: serverTimestamp() });
+        await logActivity(`New lead added: ${name}`);
+      }
+
+      // WON conversion: offer to create a client record
+      if(newStage === "Won" && !wasWonAlready){
+        const shouldConvert = confirm(`${name} is marked Won. Convert them into a client now?`);
+        if(shouldConvert){
+          await addDoc(collection(db, "clients"), {
+            name: data.name,
+            phone: data.phone,
+            business: data.business,
+            email: "",
+            tags: ["from-lead"],
+            notes: `Converted from lead. Source: ${data.source}. Original notes: ${data.notes}`,
+            createdAt: serverTimestamp()
+          });
+          await logActivity(`Lead won and converted to client: ${name}`);
+        }
+
+        // AUTO COMMISSION: if this lead has an assigned team member and a deal
+        // value, calculate their acquisition cut and add it to what they're owed.
+        // Deal values under KES 12,000 are treated as Starter Site tier,
+        // anything above that as Web Development tier.
+        if(data.assignedTo && data.dealValue > 0){
+          const teamSnap = await getDocs(collection(db, "team"));
+          const teamList = teamSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          const member = teamList.find(m => m.name === data.assignedTo);
+          if(member){
+            const isStarterTier = data.tier === "starter";
+            const pct = isStarterTier ? Number(member.commStarter || 0) : Number(member.commWebdev || 0);
+            const commission = Math.round(data.dealValue * (pct / 100));
+            if(commission > 0){
+              const newOwed = Number(member.commissionOwed || 0) + commission;
+              await updateDoc(doc(db, "team", member.id), { commissionOwed: newOwed });
+              await addDoc(collection(db, "team", member.id, "commissionLog"), {
+                amount: commission,
+                reason: `Lead won: ${name} (${isStarterTier ? "Starter" : "Web Dev"} tier, ${pct}% of ${data.dealValue})`,
+                createdAt: serverTimestamp()
+              });
+              await logActivity(`Commission auto-added for ${member.name}: KES ${commission.toLocaleString("en-KE")} (${name})`);
+            }
+          }
+        }
+      }
+
+      modalOverlay.classList.remove("open");
+      await loadLeads();
+    } catch(err){
+      alert("Could not save lead. Check your connection and try again.");
+      console.error(err);
+    }
+  });
+
+  document.getElementById("deleteLeadBtn").addEventListener("click", async () => {
+    if(!editingLeadId) return;
+    const lead = allLeads.find(l => l.id === editingLeadId);
+    if(!confirm(`Delete ${lead?.name || "this lead"}? This cannot be undone.`)) return;
+    try{
+      await deleteDoc(doc(db, "leads", editingLeadId));
+      await logActivity(`Deleted lead: ${lead?.name || ""}`);
+      modalOverlay.classList.remove("open");
+      await loadLeads();
+    } catch(err){
+      alert("Could not delete lead.");
+    }
+  });
+
+  // ===== ALERT BELL =====
+  async function initAlertBell(user, isAdminUser){
+    let myName = null;
+    if(!isAdminUser){
+      try{
+        const teamSnap = await getDocs(collection(db, "team"));
+        const teamList = teamSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const profile = teamList.find(m => (m.email || "").toLowerCase() === user.email.toLowerCase());
+        myName = profile ? profile.name : null;
+      } catch(err){ myName = null; }
+    }
+
+    const todayStr = new Date().toISOString().split("T")[0];
+    const items = [];
+
+    try{
+      const taskSnap = await getDocs(collection(db, "tasks"));
+      const tasks = taskSnap.docs.map(d => d.data());
+      const overdue = tasks.filter(t => t.dueDate && t.dueDate < todayStr && t.status !== "Done" && (isAdminUser || t.assignedTo === myName));
+      overdue.forEach(t => items.push({ type: "task", title: `Overdue: ${t.title || "Task"}`, sub: t.dueDate }));
+    } catch(err){}
+
+    try{
+      const leadSnap = await getDocs(collection(db, "leads"));
+      const leads = leadSnap.docs.map(d => d.data());
+      const due = leads.filter(l => l.followUpDate && l.followUpDate <= todayStr && l.stage !== "Won" && l.stage !== "Lost" && (isAdminUser || l.assignedTo === myName));
+      due.forEach(l => items.push({ type: "lead", title: `Follow up: ${l.name || "Lead"}`, sub: l.business || "" }));
+    } catch(err){}
+
+    if(isAdminUser){
+      try{
+        const paySnap = await getDocs(collection(db, "payments"));
+        const payments = paySnap.docs.map(d => d.data());
+        const outstanding = payments.filter(p => Number(p.amountExpected || 0) > Number(p.amountReceived || 0));
+        outstanding.forEach(p => items.push({ type: "payment", title: `Outstanding: ${p.clientName || "Client"}`, sub: "KES " + (Number(p.amountExpected||0) - Number(p.amountReceived||0)).toLocaleString("en-KE") }));
+      } catch(err){}
+    }
+
+    const badge = document.getElementById("alertBadge");
+    const listEl = document.getElementById("alertPanelList");
+    if(items.length === 0){
+      badge.style.display = "none";
+      listEl.innerHTML = '<div class="alert-empty">All clear.</div>';
+    } else {
+      badge.style.display = "inline-block";
+      badge.textContent = items.length;
+      listEl.innerHTML = items.map(i => `<div class="alert-item"><span class="alert-item-title">${i.title}</span><span class="alert-item-sub">${i.sub}</span></div>`).join("");
+    }
+  }
+
+  const alertBellBtn = document.getElementById("alertBellBtn");
+  const alertPanel = document.getElementById("alertPanel");
+  if(alertBellBtn){
+    alertBellBtn.addEventListener("click", () => {
+      alertPanel.style.display = alertPanel.style.display === "none" ? "block" : "none";
+    });
+    document.addEventListener("click", (e) => {
+      if(!alertBellBtn.contains(e.target) && !alertPanel.contains(e.target)){
+        alertPanel.style.display = "none";
+      }
+    });
+  }
+
+</script>
+
+</body>
+</html>

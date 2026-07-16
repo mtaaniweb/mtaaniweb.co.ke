@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MtaaniOS | Team</title>
+<link rel="icon" type="image/png" href="https://res.cloudinary.com/hztm3zo8/image/upload/v1783966839/Purple_and_Blue_Grdient_Simple_Minimalist_Elegant_Website_Logo_20260713_211434_0000_ndnwtt.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0D0B2B;--navy-soft:#141230;--navy-card:#181633;
+    --cyan:#38B6FF;--purple:#9B59B6;--text-primary:#F4F5F9;--text-muted:#9A9AB5;
+    --border:rgba(255,255,255,0.08);--danger:#FF6B6B;--success:#4ADE80;--warn:#FFC107;
+    --sidebar-w:240px;
+  }
+  [data-theme="light"]{
+    --navy:#F4F5F9;--navy-soft:#FFFFFF;--navy-card:#FFFFFF;
+    --text-primary:#171630;--text-muted:#6B6B85;--border:rgba(13,11,43,0.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--navy);font-family:'Inter',sans-serif;color:var(--text-primary);min-height:100vh;display:flex;transition:background 0.3s, color 0.3s;}
+  .sidebar{width:var(--sidebar-w);background:var(--navy-soft);border-right:1px solid var(--border);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;padding:24px 16px;z-index:100;transition:transform 0.3s;}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 24px;margin-bottom:8px;border-bottom:1px solid var(--border);}
+  .brand img{width:32px;height:32px;border-radius:8px;}
+  .brand span{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;}
+  nav{flex:1;display:flex;flex-direction:column;gap:2px;margin-top:16px;overflow-y:auto;}
+  nav a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--text-muted);text-decoration:none;font-size:13px;font-weight:500;transition:background 0.15s, color 0.15s;}
+  nav a svg{width:16px;height:16px;flex-shrink:0;}
+  nav a:hover{background:rgba(56,182,255,0.08);color:var(--text-primary);}
+  nav a.active{background:linear-gradient(135deg, rgba(56,182,255,0.15), rgba(155,89,182,0.15));color:var(--cyan);}
+  nav a.hidden{display:none;}
+  .sidebar-footer{border-top:1px solid var(--border);padding-top:16px;margin-top:8px;position:relative;}
+  .signout-btn{width:100%;padding:10px 12px;background:none;border:1px solid var(--border);border-radius:10px;color:var(--danger);font-size:13px;font-weight:500;cursor:pointer;text-align:left;font-family:'Inter',sans-serif;}
+  .signout-btn:hover{background:rgba(255,107,107,0.08);}
+
+  .main{margin-left:var(--sidebar-w);flex:1;padding:32px 40px 60px;max-width:1100px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:16px;}
+  .topbar h1{font-family:'Poppins',sans-serif;font-weight:600;font-size:24px;}
+  .topbar p{color:var(--text-muted);font-size:13px;margin-top:2px;}
+
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;border:none;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;cursor:pointer;}
+  .btn-primary{background:linear-gradient(135deg, var(--cyan), var(--purple));color:#fff;}
+  .btn-primary:hover{opacity:0.92;}
+  .btn-ghost{background:none;border:1px solid var(--border);color:var(--text-primary);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.04);}
+  .btn-danger{background:rgba(255,107,107,0.1);color:var(--danger);border:1px solid rgba(255,107,107,0.2);}
+  .btn-success{background:rgba(74,222,128,0.12);color:var(--success);border:1px solid rgba(74,222,128,0.25);}
+  .btn-sm{padding:6px 11px;font-size:11px;}
+
+  .agg-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;}
+  .agg-stat-card{background:var(--navy-card);border:1px solid var(--border);border-radius:16px;padding:18px;position:relative;overflow:hidden;}
+  .agg-stat-card::before{content:'';position:absolute;top:-30%;right:-30%;width:100px;height:100px;background:radial-gradient(circle, var(--glow-color, var(--success)) 0%, transparent 70%);opacity:0.2;filter:blur(20px);}
+  .agg-stat-label{font-size:11px;color:var(--text-muted);margin-bottom:8px;}
+  .agg-stat-value{font-family:'Poppins',sans-serif;font-size:21px;font-weight:700;}
+
+  @media(min-width:900px){
+  .agg-stat-grid{grid-template-columns:repeat(4, 1fr);}
+  }
+
+  /* ADMIN ROSTER VIEW */
+  .member-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .member-card{background:var(--navy-card);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden;}
+  .member-card::before{content:'';position:absolute;top:-30%;right:-30%;width:100px;height:100px;background:radial-gradient(circle, var(--cyan) 0%, transparent 70%);opacity:0.15;filter:blur(20px);}
+  .member-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg, var(--cyan), var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:#fff;flex-shrink:0;}
+  .member-name{font-family:'Poppins',sans-serif;font-weight:600;font-size:15px;}
+  .member-email{font-size:11px;color:var(--text-muted);}
+  .role-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+  .role-tag{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:rgba(56,182,255,0.12);color:var(--cyan);text-transform:uppercase;}
+  .member-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+  .mini-stat{background:rgba(255,255,255,0.03);border-radius:10px;padding:10px;}
+  .mini-stat-label{font-size:10px;color:var(--text-muted);margin-bottom:4px;}
+  .mini-stat-value{font-family:'Poppins',sans-serif;font-size:15px;font-weight:700;}
+  .commission-row{display:flex;justify-content:space-between;align-items:center;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:10px 12px;margin-bottom:14px;}
+  .commission-label{font-size:11px;color:var(--text-muted);}
+  .commission-value{font-family:'Poppins',sans-serif;font-weight:700;font-size:16px;color:var(--success);}
+  .member-actions{display:flex;gap:6px;flex-wrap:wrap;}
+
+  /* STAFF PERSONAL VIEW */
+  .personal-header{background:var(--navy-card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;text-align:center;}
+  .personal-header .avatar{width:64px;height:64px;font-size:22px;margin:0 auto 14px;}
+  .personal-name{font-family:'Poppins',sans-serif;font-size:20px;font-weight:600;margin-bottom:4px;}
+  .personal-commission{font-family:'Poppins',sans-serif;font-size:32px;font-weight:700;color:var(--success);margin:10px 0 4px;}
+  .personal-commission-label{font-size:12px;color:var(--text-muted);}
+  .personal-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+  .personal-stat-card{background:var(--navy-card);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center;}
+  .personal-stat-value{font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;margin-bottom:4px;}
+  .personal-stat-label{font-size:11px;color:var(--text-muted);}
+
+  .empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);}
+  .empty-state svg{width:40px;height:40px;margin-bottom:14px;opacity:0.4;}
+  .empty-state p{font-size:13px;}
+  .restricted{text-align:center;padding:80px 20px;color:var(--text-muted);}
+  .restricted svg{margin-bottom:16px;opacity:0.4;}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--navy-soft);border:1px solid var(--border);border-radius:18px;padding:28px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;}
+  .modal h2{font-family:'Poppins',sans-serif;font-size:17px;font-weight:600;margin-bottom:18px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:6px;}
+  .field input, .field textarea, .field select{width:100%;padding:11px 13px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;color:var(--text-primary);font-size:13px;font-family:'Inter',sans-serif;resize:vertical;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:none;border-color:var(--cyan);}
+  .field-row{display:flex;gap:10px;}
+  .field-row .field{flex:1;}
+  .checkbox-group{display:flex;gap:14px;flex-wrap:wrap;}
+  .checkbox-group label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-primary);font-weight:400;}
+  .checkbox-group input{width:auto;}
+  .modal-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+  .modal-actions .btn{flex:1;justify-content:center;min-width:100px;}
+
+  .loading-row{display:flex;align-items:center;gap:8px;color:var(--text-muted);font-size:12px;padding:16px 0;}
+  .spin{width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--cyan);border-radius:50%;animation:spin 0.7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  .mobile-toggle{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--navy-card);border:1px solid var(--border);border-radius:10px;width:40px;height:40px;align-items:center;justify-content:center;cursor:pointer;}
+  @media(max-width:860px){
+    .sidebar{transform:translateX(-100%);}
+    .sidebar.open{transform:translateX(0);}
+    .main{margin-left:0;padding:32px 20px 60px;}
+    .mobile-toggle{display:flex;}
+    .topbar{margin-top:36px;}
+  }
+
+  /* DESKTOP: cards expand beyond the fixed 2-column mobile layout */
+  @media(min-width:900px){
+  .personal-stats{grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));}
+  .member-grid{grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));}
+  }
+
+  .alert-bell{
+    width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;
+    background:none;border:1px solid var(--border);border-radius:10px;
+    color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;
+    font-family:'Inter',sans-serif;margin-bottom:8px;text-decoration:none;
+  }
+  .alert-bell:hover{background:rgba(56,182,255,0.08);color:var(--text-primary);}
+  .alert-bell svg{width:16px;height:16px;flex-shrink:0;}
+  .alert-badge{
+    margin-left:auto;background:var(--danger);color:#fff;font-size:10px;font-weight:700;
+    padding:2px 7px;border-radius:20px;line-height:1.4;
+  }
+
+  @media(max-width:400px){
+    .agg-stat-card{padding:14px;}
+    .agg-stat-value{font-size:16px;word-break:break-word;}
+    .agg-stat-label{font-size:9px;}
+    .member-stats{grid-template-columns:1fr 1fr;}
+    .mini-stat{padding:8px;}
+    .mini-stat-value{font-size:12px;word-break:break-word;}
+    .member-card{padding:14px;}
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<button class="mobile-toggle" id="mobileToggle">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <img src="https://res.cloudinary.com/hztm3zo8/image/upload/v1783966839/Purple_and_Blue_Grdient_Simple_Minimalist_Elegant_Website_Logo_20260713_211434_0000_ndnwtt.png" alt="MtaaniOS">
+    <span>MtaaniOS</span>
+  </div>
+  <nav id="navList">
+    <a href="admin.html" id="navDashboard" data-key="admin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</a>
+    <a href="clients.html" data-key="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a8 8 0 0116 0v1"/></svg>Clients</a>
+    <a href="leads.html" data-key="leads"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h12"/></svg>Leads</a>
+    <a href="bookings.html" data-key="bookings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Bookings</a>
+    <a href="projects.html" data-key="projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Projects</a>
+    <a href="payments.html" data-key="payments"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="2"/><line x1="2" y1="11" x2="22" y2="11"/></svg>Payments</a>
+    <a href="tasks.html" data-key="tasks"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>Tasks</a>
+    <a href="calendar.html" data-key="calendar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar</a>
+    <a href="content.html" data-key="content"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Content</a>
+    <a href="team.html" class="active" data-key="team"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 21v-1a6 6 0 0112 0v1"/><circle cx="17" cy="9" r="2.5"/><path d="M15 21v-1a4 4 0 016 0v1"/></svg>Team</a>
+    <a href="reports.html" data-key="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Reports</a>
+    <a href="settings.html" data-key="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <a class="alert-bell" href="alerts.html" id="alertBellBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span>Alerts</span>
+      <span class="alert-badge" id="alertBadge" style="display:none;">0</span>
+    </a>
+    <button class="signout-btn" id="signoutBtn">Sign out</button>
+  </div>
+</aside>
+
+<main class="main">
+
+  <!-- ADMIN VIEW -->
+  <div id="adminView" style="display:none;">
+    <div class="topbar">
+      <div>
+        <h1>Team</h1>
+        <p id="memberCount">Loading team</p>
+      </div>
+      <button class="btn btn-primary" id="addMemberBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add team member
+      </button>
+    </div>
+
+    <div class="agg-stat-grid" id="aggStatGrid">
+      <div class="agg-stat-card" style="--glow-color:var(--success)">
+        <div class="agg-stat-label">Total collected (all collectors)</div>
+        <div class="agg-stat-value" id="aggCollected">KES 0</div>
+      </div>
+      <div class="agg-stat-card" style="--glow-color:var(--warn)">
+        <div class="agg-stat-label">Total commission owed</div>
+        <div class="agg-stat-value" id="aggOwed">KES 0</div>
+      </div>
+      <div class="agg-stat-card" style="--glow-color:var(--cyan)">
+        <div class="agg-stat-label">Total commission paid out</div>
+        <div class="agg-stat-value" id="aggPaidOut">KES 0</div>
+      </div>
+      <div class="agg-stat-card" style="--glow-color:var(--purple)">
+        <div class="agg-stat-label">Active team members</div>
+        <div class="agg-stat-value" id="aggMembers">0</div>
+      </div>
+    </div>
+
+    <div id="memberGridWrap">
+      <div class="loading-row"><div class="spin"></div>Loading team</div>
+    </div>
+  </div>
+
+  <!-- RESTRICTED VIEW for non-admin -->
+  <div id="restrictedView" style="display:none;">
+    <div class="restricted">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="44" height="44"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <p>Team management is only available to the business admin.</p>
+    </div>
+  </div>
+
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add team member</h2>
+    <div class="field"><label>Name</label><input type="text" id="fName" placeholder="Full name"></div>
+    <div class="field-row">
+      <div class="field"><label>Email (their login email)</label><input type="text" id="fEmail" placeholder="them@email.com"></div>
+      <div class="field"><label>Phone</label><input type="text" id="fPhone" placeholder="07XX XXX XXX"></div>
+    </div>
+    <div class="field">
+      <label>Roles</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" id="rAcquisition" value="Acquisition"> Acquisition</label>
+        <label><input type="checkbox" id="rContent" value="Content"> Content</label>
+        <label><input type="checkbox" id="rCollections" value="Collections"> Collections</label>
+        <label><input type="checkbox" id="rGeneral" value="General"> General</label>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Acquisition % (Starter Sites)</label><input type="number" id="fCommStarter" placeholder="30"></div>
+      <div class="field"><label>Acquisition % (Web Development)</label><input type="number" id="fCommWebdev" placeholder="18"></div>
+    </div>
+    <div class="field"><label>Collections %</label><input type="number" id="fCommCollections" placeholder="8"></div>
+    <div class="field"><label>Notes</label><textarea id="fNotes" rows="2" placeholder="Anything worth noting"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelModalBtn">Cancel</button>
+      <button class="btn btn-danger" id="deleteMemberBtn" style="display:none;">Remove</button>
+      <button class="btn btn-primary" id="saveMemberBtn">Save member</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="commissionModalOverlay">
+  <div class="modal">
+    <h2>Adjust commission</h2>
+    <div class="field"><label>Amount (KES, use negative to reduce)</label><input type="number" id="cAmount" placeholder="3000"></div>
+    <div class="field"><label>Reason</label><input type="text" id="cReason" placeholder="e.g. Lead won: Kimnjam Carwash"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="cancelCommissionBtn">Cancel</button>
+      <button class="btn btn-success" id="markPaidBtn">Mark all paid</button>
+      <button class="btn btn-primary" id="addCommissionBtn">Add to owed</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+  import {
+    getFirestore, collection, getDocs, doc, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-ndNW__8PMGJB3QHnFD9J7XtQh82EqjA",
+    authDomain: "mtaanios.firebaseapp.com",
+    projectId: "mtaanios",
+    storageBucket: "mtaanios.firebasestorage.app",
+    messagingSenderId: "407302134340",
+    appId: "1:407302134340:web:697218f5731b0314a23a11"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const ADMIN_EMAIL = "mtaaniweb@gmail.com";
+
+  let currentUser = null;
+  let allMembers = [];
+  let editingMemberId = null;
+  let activeCommissionMemberId = null;
+
+  onAuthStateChanged(auth, (user) => {
+    if(!user){ window.location.href = "login.html"; return; }
+    currentUser = user;
+
+    if(user.email.toLowerCase() !== ADMIN_EMAIL){
+      document.getElementById("navDashboard").href = "teamdash.html";
+      document.getElementById("restrictedView").style.display = "block";
+      return;
+    }
+
+    document.getElementById("adminView").style.display = "block";
+    initAlertBell(user, true);
+    loadRoster();
+  });
+
+  document.getElementById("signoutBtn").addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  });
+
+  const sidebar = document.getElementById("sidebar");
+  document.getElementById("mobileToggle").addEventListener("click", () => sidebar.classList.toggle("open"));
+
+  const savedTheme = localStorage.getItem("mtaanios-theme") || "dark";
+  document.body.setAttribute("data-theme", savedTheme);
+
+  function fmtKES(n){ return "KES " + Number(n || 0).toLocaleString("en-KE"); }
+  function initials(name){ return (name || "?").split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase(); }
+
+  async function logActivity(description){
+    try{
+      await addDoc(collection(db, "activity"), {
+        description, actor: currentUser ? currentUser.email : "System", timestamp: serverTimestamp()
+      });
+    } catch(err){ console.warn("Could not log activity", err.message); }
+  }
+
+  async function safeGetDocs(colName){
+    try{
+      const snap = await getDocs(collection(db, colName));
+      return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch(err){ return []; }
+  }
+
+  // ===== ADMIN ROSTER =====
+  async function loadRoster(){
+    allMembers = await safeGetDocs("team");
+    const leads = await safeGetDocs("leads");
+    const content = await safeGetDocs("content");
+    const payments = await safeGetDocs("payments");
+
+    document.getElementById("memberCount").textContent = allMembers.length === 0 ? "No team members yet" : allMembers.length + (allMembers.length === 1 ? " team member" : " team members");
+
+    // AGGREGATE STATS across the whole team
+    const totalCollected = payments.filter(p => p.collectorAssigned).reduce((sum, p) => sum + Number(p.amountReceived || 0), 0);
+    const totalOwed = allMembers.reduce((sum, m) => sum + Number(m.commissionOwed || 0), 0);
+    let totalPaidOut = 0;
+    for(const m of allMembers){
+      try{
+        const logSnap = await getDocs(collection(db, "team", m.id, "commissionLog"));
+        logSnap.docs.forEach(d => {
+          const amt = Number(d.data().amount || 0);
+          if(amt < 0) totalPaidOut += Math.abs(amt);
+        });
+      } catch(err){}
+    }
+    document.getElementById("aggCollected").textContent = fmtKES(totalCollected);
+    document.getElementById("aggOwed").textContent = fmtKES(totalOwed);
+    document.getElementById("aggPaidOut").textContent = fmtKES(totalPaidOut);
+    document.getElementById("aggMembers").textContent = allMembers.length;
+
+    const wrap = document.getElementById("memberGridWrap");
+    if(allMembers.length === 0){
+      wrap.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="8" r="3"/><path d="M2 21v-1a6 6 0 0112 0v1"/></svg>
+        <p>No team members yet. Add someone once client acquisition needs more hands.</p>
+      </div>`;
+      return;
+    }
+
+    const now = new Date();
+    const monthAgo = new Date(now.getTime() - 30*86400000).toISOString().split("T")[0];
+    const weekAgo = new Date(now.getTime() - 7*86400000).toISOString().split("T")[0];
+
+    wrap.innerHTML = `<div class="member-grid">` + allMembers.map(m => {
+      const leadsWon = leads.filter(l => l.assignedTo === m.name && l.stage === "Won" && (l.followUpDate || "") >= monthAgo).length;
+      const posts = content.filter(c => c.postedBy === m.email && c.status === "Published" && (c.date || "") >= weekAgo).length;
+      const collected = payments.filter(p => p.collectorAssigned === m.name).reduce((sum, p) => sum + Number(p.amountReceived || 0), 0);
+      const roles = m.roles || [];
+
+      return `<div class="member-card" data-id="${m.id}">
+        <div class="member-top">
+          <div class="avatar">${initials(m.name)}</div>
+          <div>
+            <div class="member-name">${m.name || "Unnamed"}</div>
+            <div class="member-email">${m.email || "No email"}</div>
+          </div>
+        </div>
+        <div class="role-tags">${roles.map(r => `<span class="role-tag">${r}</span>`).join("") || "<span style='color:var(--text-muted);font-size:11px;'>No roles set</span>"}</div>
+        <div class="member-stats">
+          <div class="mini-stat"><div class="mini-stat-label">Leads won (30d)</div><div class="mini-stat-value">${leadsWon}</div></div>
+          <div class="mini-stat"><div class="mini-stat-label">Posts (7d)</div><div class="mini-stat-value">${posts}</div></div>
+          <div class="mini-stat"><div class="mini-stat-label">Collected</div><div class="mini-stat-value" style="font-size:13px;">${fmtKES(collected)}</div></div>
+          <div class="mini-stat"><div class="mini-stat-label">Starter %</div><div class="mini-stat-value" style="font-size:13px;">${m.commStarter || 0}%</div></div>
+          <div class="mini-stat"><div class="mini-stat-label">Web Dev %</div><div class="mini-stat-value" style="font-size:13px;">${m.commWebdev || 0}%</div></div>
+          <div class="mini-stat"><div class="mini-stat-label">Collections %</div><div class="mini-stat-value" style="font-size:13px;">${m.commCollections || 0}%</div></div>
+        </div>
+        <div class="commission-row">
+          <span class="commission-label">Commission owed</span>
+          <span class="commission-value">${fmtKES(m.commissionOwed || 0)}</span>
+        </div>
+        <div class="member-actions">
+          <button class="btn btn-success btn-sm" data-commission="${m.id}">Adjust commission</button>
+          <button class="btn btn-ghost btn-sm" data-edit="${m.id}">Edit</button>
+        </div>
+      </div>`;
+    }).join("") + `</div>`;
+
+    wrap.querySelectorAll("[data-edit]").forEach(btn => {
+      btn.addEventListener("click", () => openModal(allMembers.find(m => m.id === btn.dataset.edit)));
+    });
+    wrap.querySelectorAll("[data-commission]").forEach(btn => {
+      btn.addEventListener("click", () => openCommissionModal(btn.dataset.commission));
+    });
+  }
+
+  const modalOverlay = document.getElementById("modalOverlay");
+  document.getElementById("addMemberBtn")?.addEventListener("click", () => openModal());
+  document.getElementById("cancelModalBtn").addEventListener("click", () => modalOverlay.classList.remove("open"));
+
+  function openModal(member){
+    editingMemberId = member ? member.id : null;
+    document.getElementById("modalTitle").textContent = member ? "Edit team member" : "Add team member";
+    document.getElementById("fName").value = member?.name || "";
+    document.getElementById("fEmail").value = member?.email || "";
+    document.getElementById("fPhone").value = member?.phone || "";
+    const roles = member?.roles || [];
+    document.getElementById("rAcquisition").checked = roles.includes("Acquisition");
+    document.getElementById("rContent").checked = roles.includes("Content");
+    document.getElementById("rCollections").checked = roles.includes("Collections");
+    document.getElementById("rGeneral").checked = roles.includes("General");
+    document.getElementById("fCommStarter").value = member?.commStarter || "";
+    document.getElementById("fCommWebdev").value = member?.commWebdev || "";
+    document.getElementById("fCommCollections").value = member?.commCollections || "";
+    document.getElementById("fNotes").value = member?.notes || "";
+    document.getElementById("deleteMemberBtn").style.display = member ? "block" : "none";
+    modalOverlay.classList.add("open");
+  }
+
+  document.getElementById("saveMemberBtn").addEventListener("click", async () => {
+    const name = document.getElementById("fName").value.trim();
+    const email = document.getElementById("fEmail").value.trim().toLowerCase();
+    if(!name || !email){ alert("Name and email are required."); return; }
+
+    const roles = [];
+    if(document.getElementById("rAcquisition").checked) roles.push("Acquisition");
+    if(document.getElementById("rContent").checked) roles.push("Content");
+    if(document.getElementById("rCollections").checked) roles.push("Collections");
+    if(document.getElementById("rGeneral").checked) roles.push("General");
+
+    const data = {
+      name, email,
+      phone: document.getElementById("fPhone").value.trim(),
+      roles,
+      commStarter: Number(document.getElementById("fCommStarter").value || 0),
+      commWebdev: Number(document.getElementById("fCommWebdev").value || 0),
+      commCollections: Number(document.getElementById("fCommCollections").value || 0),
+      notes: document.getElementById("fNotes").value.trim()
+    };
+
+    try{
+      if(editingMemberId){
+        await updateDoc(doc(db, "team", editingMemberId), data);
+        await logActivity(`Team member updated: ${name}`);
+      } else {
+        await addDoc(collection(db, "team"), { ...data, commissionOwed: 0, createdAt: serverTimestamp() });
+        await logActivity(`New team member added: ${name}`);
+      }
+      modalOverlay.classList.remove("open");
+      await loadRoster();
+    } catch(err){
+      alert("Could not save team member.");
+      console.error(err);
+    }
+  });
+
+  document.getElementById("deleteMemberBtn").addEventListener("click", async () => {
+    if(!editingMemberId) return;
+    const m = allMembers.find(x => x.id === editingMemberId);
+    if(!confirm(`Remove ${m?.name} from the team?`)) return;
+    try{
+      await deleteDoc(doc(db, "team", editingMemberId));
+      await logActivity(`Team member removed: ${m?.name || ""}`);
+      modalOverlay.classList.remove("open");
+      await loadRoster();
+    } catch(err){
+      alert("Could not remove team member.");
+    }
+  });
+
+  // COMMISSION ADJUST
+  const commissionModalOverlay = document.getElementById("commissionModalOverlay");
+  function openCommissionModal(memberId){
+    activeCommissionMemberId = memberId;
+    document.getElementById("cAmount").value = "";
+    document.getElementById("cReason").value = "";
+    commissionModalOverlay.classList.add("open");
+  }
+  document.getElementById("cancelCommissionBtn").addEventListener("click", () => commissionModalOverlay.classList.remove("open"));
+
+  document.getElementById("addCommissionBtn").addEventListener("click", async () => {
+    const amount = Number(document.getElementById("cAmount").value || 0);
+    const reason = document.getElementById("cReason").value.trim();
+    if(!amount || !activeCommissionMemberId) return;
+    const member = allMembers.find(m => m.id === activeCommissionMemberId);
+    const newOwed = Number(member?.commissionOwed || 0) + amount;
+    try{
+      await updateDoc(doc(db, "team", activeCommissionMemberId), { commissionOwed: newOwed });
+      await addDoc(collection(db, "team", activeCommissionMemberId, "commissionLog"), { amount, reason, createdAt: serverTimestamp() });
+      await logActivity(`Commission adjusted for ${member?.name}: ${fmtKES(amount)} (${reason || "no reason given"})`);
+      commissionModalOverlay.classList.remove("open");
+      await loadRoster();
+    } catch(err){
+      alert("Could not adjust commission.");
+    }
+  });
+
+  document.getElementById("markPaidBtn").addEventListener("click", async () => {
+    if(!activeCommissionMemberId) return;
+    const member = allMembers.find(m => m.id === activeCommissionMemberId);
+    if(!confirm(`Mark ${fmtKES(member?.commissionOwed || 0)} as paid to ${member?.name}?`)) return;
+    try{
+      await updateDoc(doc(db, "team", activeCommissionMemberId), { commissionOwed: 0 });
+      await addDoc(collection(db, "team", activeCommissionMemberId, "commissionLog"), { amount: -(member?.commissionOwed || 0), reason: "Marked as paid", createdAt: serverTimestamp() });
+      await logActivity(`Commission paid out to ${member?.name}: ${fmtKES(member?.commissionOwed || 0)}`);
+      commissionModalOverlay.classList.remove("open");
+      await loadRoster();
+    } catch(err){
+      alert("Could not mark as paid.");
+    }
+  });
+
+
+  // ===== ALERT BELL =====
+  async function initAlertBell(user, isAdminUser){
+    let myName = null;
+    if(!isAdminUser){
+      try{
+        const teamSnap = await getDocs(collection(db, "team"));
+        const teamList = teamSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const profile = teamList.find(m => (m.email || "").toLowerCase() === user.email.toLowerCase());
+        myName = profile ? profile.name : null;
+      } catch(err){ myName = null; }
+    }
+
+    const todayStr = new Date().toISOString().split("T")[0];
+    let count = 0;
+
+    try{
+      const taskSnap = await getDocs(collection(db, "tasks"));
+      const tasks = taskSnap.docs.map(d => d.data());
+      count += tasks.filter(t => t.dueDate && t.dueDate < todayStr && t.status !== "Done" && (isAdminUser || t.assignedTo === myName)).length;
+    } catch(err){}
+
+    try{
+      const leadSnap = await getDocs(collection(db, "leads"));
+      const leads = leadSnap.docs.map(d => d.data());
+      count += leads.filter(l => l.followUpDate && l.followUpDate <= todayStr && l.stage !== "Won" && l.stage !== "Lost" && (isAdminUser || l.assignedTo === myName)).length;
+    } catch(err){}
+
+    if(isAdminUser){
+      try{
+        const paySnap = await getDocs(collection(db, "payments"));
+        const payments = paySnap.docs.map(d => d.data());
+        count += payments.filter(p => Number(p.amountExpected || 0) > Number(p.amountReceived || 0)).length;
+      } catch(err){}
+    }
+
+    const badge = document.getElementById("alertBadge");
+    if(count === 0){
+      badge.style.display = "none";
+    } else {
+      badge.style.display = "inline-block";
+      badge.textContent = count;
+    }
+  }
+
+
+
+</script>
+
+</body>
+</html>

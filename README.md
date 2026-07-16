@@ -17,7 +17,7 @@ Contact, Reviews, Blog, Terms and Conditions, and Privacy Policy.
 business email, mobile-friendly design, hosted and managed by MtaaniWeb. 
 Renewed yearly.
 
-**Starter Apps** -- Simple digital systems for small businesses moving 
+**Business Systems** -- Simple digital systems for small businesses moving 
 from analogue to digital. Booking management, staff portals, reporting, 
 and more. Scoped and priced per project.
 
